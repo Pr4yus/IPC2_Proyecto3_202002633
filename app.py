@@ -1,162 +1,186 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import xml.etree.ElementTree as ET
-import matplotlib.pyplot as plt
-import numpy as np
+
+# from config import config
 
 app = Flask(__name__)
 
+
+# Estructura de datos para almacenar clientes y bancos
 class Cliente:
     def __init__(self, nit, nombre):
         self.nit = nit
         self.nombre = nombre
+
 
 class Banco:
     def __init__(self, codigo, nombre):
         self.codigo = codigo
         self.nombre = nombre
 
-class Transaccion:
-    def __init__(self, tipo, monto):
-        self.tipo = tipo
-        self.monto = monto
 
-class ProcesadorDatos:
-    def __init__(self):
-        self.clientes = {}
-        self.transacciones = {}
+class Factura:
+    def __init__(self, numero_factura, nit_cliente, fecha, valor):
+        self.numero_factura = numero_factura
+        self.nit_cliente = nit_cliente
+        self.fecha = fecha
+        self.valor = valor
 
-    def procesar_configuracion(self, data):
-        try:
-            root = ET.fromstring(data)
-            for cliente_xml in root.find('clientes').findall('cliente'):
+
+class Pago:
+    def __init__(self, codigo_banco, fecha, nit_cliente, valor):
+        self.codigo_banco = codigo_banco
+        self.fecha = fecha
+        self.nit_cliente = nit_cliente
+        self.valor = valor
+
+
+facturas = []
+pagos = []
+
+clientes = {}
+bancos = {}
+
+
+@app.route('/grabarConfiguracion', methods=['POST'])
+def grabarConfiguracion():
+    try:
+        file = request.files['file']
+        if file.filename.endswith('xml'):
+            tree = ET.parse(file)
+            root = tree.getroot()
+
+            for cliente_xml in root.findall('./clientes/cliente'):
                 nit = cliente_xml.find('NIT').text
                 nombre = cliente_xml.find('nombre').text
-                self.clientes[nit] = Cliente(nit, nombre)
+                clientes[nit] = Cliente(nit, nombre)
 
-            # No necesitamos procesar los bancos para el estado de cuenta
+            for banco_xml in root.findall('./bancos/banco'):
+                codigo = banco_xml.find('codigo').text
+                nombre = banco_xml.find('nombre').text
+                bancos[codigo] = Banco(codigo, nombre)
 
-        except ET.ParseError as e:
-            print("Error de análisis XML de configuración:", e)
-
-    def procesar_transacciones(self, data):
-        try:
-            root = ET.fromstring(data)
-            for transaccion_xml in root.find('transacciones').findall('transaccion'):
-                nit = transaccion_xml.find('NIT').text
-                tipo = transaccion_xml.find('tipo').text
-                monto = float(transaccion_xml.find('monto').text)
-                if nit in self.transacciones:
-                    self.transacciones[nit].append(Transaccion(tipo, monto))
-                else:
-                    self.transacciones[nit] = [Transaccion(tipo, monto)]
-        except ET.ParseError as e:
-            print("Error de análisis XML de transacciones:", e)
-
-    def obtener_estado_cuenta(self, nit_cliente):
-        # Verificar si el cliente existe en los datos cargados
-        if nit_cliente in self.clientes:
-            cliente = self.clientes[nit_cliente]
-            # Inicializar el saldo actual del cliente
-            saldo_actual = 0
-            # Inicializar la lista de transacciones del cliente
-            transacciones_cliente = []
-
-            # Verificar si hay transacciones asociadas con el cliente
-            if nit_cliente in self.transacciones:
-                transacciones_cliente = self.transacciones[nit_cliente]
-                # Calcular el saldo actual sumando todas las transacciones
-                for transaccion in transacciones_cliente:
-                    saldo_actual += transaccion.monto
-
-            # Devolver el cliente, el saldo actual y las transacciones
-            return cliente, saldo_actual, transacciones_cliente
+            return jsonify({'message': 'Datos cargados exitosamente'}), 200
         else:
-            # Si el cliente no existe, devolver None para indicar que no se encontró el cliente
-            return None, None, None
+            return jsonify({'error': 'El archivo de tener el formato correcto de XML'}), 400
+    except Exception as ex:
+        return jsonify({'message': ex})
 
-procesador_datos = ProcesadorDatos()
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/cargarConfiguracion', methods=['POST'])
-def cargar_configuracion():
-    # Procesar el archivo XML cargado
-    archivo_configuracion = request.files['configuracion_file']
-    contenido = archivo_configuracion.read()
-
-    procesador_datos.procesar_configuracion(contenido)
-
-    return jsonify({"message": "¡El archivo de configuración se ha cargado correctamente!"})
-
-@app.route('/cargarTransacciones', methods=['POST'])
-def cargar_transacciones():
-    # Procesar el archivo XML cargado
-    archivo_transacciones = request.files['transacciones_file']
-    contenido = archivo_transacciones.read()
-
-    procesador_datos.procesar_transacciones(contenido)
-
-    return jsonify({"message": "¡El archivo de transacciones se ha cargado correctamente!"})
-
-@app.route('/consultarEstadoCuenta', methods=['GET'])
-def consultar_estado_cuenta():
-    nit_cliente = request.args.get('nit_cliente')
-    estado_cuenta = procesador_datos.obtener_estado_cuenta(nit_cliente)
-    return render_template('estado_cuenta.html', estado_cuenta=estado_cuenta)
-
-def consultar_ingresos(self, mes):
-    # Aquí iría la lógica para consultar los ingresos del mes especificado
-    # En este ejemplo, simplemente generamos ingresos aleatorios para los últimos 3 meses
-
-    # Meses disponibles (simulación)
-    meses = ['enero/2024', 'febrero/2024', 'marzo/2024']
-
-    # Ingresos para los últimos 3 meses (simulación)
-    ingresos = [np.random.randint(1000, 5000) for _ in range(3)]
-
-    # Encontrar el índice del mes seleccionado
+@app.route('/grabarTransaccion', methods=['POST'])
+def grabarTransaccion():
     try:
-        indice_mes = meses.index(mes)
-    except ValueError:
-        # Si el mes no está en la lista, seleccionamos el último mes por defecto
-        indice_mes = 2
+        file = request.files['file']
+        if file.filename.endswith('.xml'):
+            tree = ET.parse(file)
+            root = tree.getroot()
 
-    # Obtener los últimos 3 meses y sus ingresos correspondientes
-    ultimos_meses = meses[indice_mes::-1]
-    ultimos_ingresos = ingresos[indice_mes::-1]
+            for factura_xml in root.findall('./facturas/factura'):
+                numero_factura = factura_xml.find('numeroFactura').text
+                nit_cliente = factura_xml.find('NITcliente').text
+                fecha = factura_xml.find('fecha').text
+                valor = factura_xml.find('valor').text
+                facturas.append(Factura(numero_factura, nit_cliente, fecha, valor))
 
-    return ultimos_meses, ultimos_ingresos
+            for pago_xml in root.findall('./pagos/pago'):
+                codigo_banco = pago_xml.find('codigoBanco').text
+                fecha = pago_xml.find('fecha').text
+                nit_cliente = pago_xml.find('NITcliente').text
+                valor = pago_xml.find('valor').text
+                pagos.append(Pago(codigo_banco, fecha, nit_cliente, valor))
 
-# @app.route('/consultarIngresos', methods=['GET'])
-# def consultar_ingresos():
-#     mes = request.args.get('mes')
-#
-#     # Consultar los ingresos para el mes especificado
-#     meses, ingresos = procesador_datos.consultar_ingresos(mes)
-#
-#     # Verificar si hay datos disponibles
-#     if meses and ingresos:
-#         # Generar la gráfica si hay datos
-#         plt.barh(meses, ingresos)
-#         plt.xlabel('Ingresos')
-#         plt.ylabel('Mes')
-#         plt.title('Ingresos por mes')
-#         plt.tight_layout()
-#
-#         # Guardar la gráfica en un archivo temporal
-#         nombre_archivo = 'ingresos.png'
-#         plt.savefig(nombre_archivo)
-#
-#         # Renderizar la plantilla HTML con la gráfica incrustada
-#         return render_template('ingresos.html', nombre_archivo=nombre_archivo, meses=meses, ingresos=ingresos)
-#     else:
-#         # Si no hay datos disponibles, mostrar un mensaje adecuado
-#         mensaje = "No hay datos disponibles"
-#         return render_template('ingresos.html', mensaje=mensaje)
+            return jsonify({'message': 'Transacciones cargadas exitosamente'}), 200
+        else:
+            return jsonify({'error': 'El archivo debe tener formato XML'}), 400
+    except Exception as ex:
+        return jsonify({'message': ex})
 
 
+@app.route('/devolverEstadoCuenta', methods=['GET'])
+def devolverEstadoCuenta():
+    nit = request.args.get('NIT')
+    # codigo_banco = request.args.get('codigo')
+    cliente_info = None
+    banco = None
+    facturas_info = []
+    pagos_info = []
+    saldo = 0
 
-if __name__ == '__main__':
+    if nit in clientes:
+        # if nit in clientes and codigo_banco in bancos:
+        cliente_info = clientes[nit]
+        # banco = bancos[codigo_banco]
+        # return jsonify({'cliente': {'nit': cliente.nit, 'nombre': cliente.nombre}, 'banco': {'codigo': banco.codigo, 'nombre': banco.nombre}})
+        total_facturas = 0
+        for factura in facturas:
+            if factura.nit_cliente == nit:
+                factura_info = {
+                    'numero_factura': factura.numero_factura,
+                    'fecha': factura.fecha,
+                    'valor': factura.valor
+                }
+                facturas_info.append(factura_info)
+                total_facturas += float(factura.valor)
+
+        total_pagos = 0
+        for pago in pagos:
+            if pago.nit_cliente == nit:
+                if pago.codigo_banco in bancos:
+                    banco = bancos[pago.codigo_banco]
+                    pago_info = {
+                        'codigo_banco': pago.codigo_banco,
+                        'banco': banco.nombre,
+                        'fecha': pago.fecha,
+                        'valor': pago.valor
+                    }
+                    pagos_info.append(pago_info)
+                    total_pagos += float(pago.valor)
+
+        # Calcular saldo
+        saldo = total_facturas - total_pagos
+
+        return jsonify({
+            'cliente': {'nit': cliente_info.nit, 'nombre': cliente_info.nombre},
+            'cargos': facturas_info,
+            'abonos': pagos_info,
+            'saldo': saldo,
+            'moneda': 'Q'
+        })
+    else:
+        return jsonify({'error': 'Cliente o banco no encontrado'}), 404
+
+
+@app.route('/devolverResumenPagos', methods=['GET'])
+def devolverResumenPagos():
+    mes = request.args.get('mes')
+    pagos_por_banco = {}
+
+    # Filtrar pagos por el mes especificado
+    for pago in pagos:
+        if pago.codigo_banco in bancos:
+            banco = bancos[pago.codigo_banco]
+            fecha_pago = pago.fecha.split('/')[1]
+            if fecha_pago == mes:
+                if pago.codigo_banco not in pagos_por_banco:
+                    pagos_por_banco[banco.nombre] = []
+
+                pago_info = {
+                    'fecha': pago.fecha,
+                    'codigo_banco': pago.codigo_banco,
+                    'banco': banco.nombre,
+                    'NIT_cliente': pago.nit_cliente,
+                    'monto': pago.valor
+                }
+                pagos_por_banco[banco.nombre].append(pago_info)
+
+    return jsonify(pagos_por_banco)
+
+
+def pagina_no_encontrada(error):
+    return "<h1>La página que intentas buscar no existe!!</h1>"
+
+
+if __name__ == "__main__":
+    # app.config.from_object(config['development'])
+    app.register_error_handler(404, pagina_no_encontrada)
     app.run(debug=True)
