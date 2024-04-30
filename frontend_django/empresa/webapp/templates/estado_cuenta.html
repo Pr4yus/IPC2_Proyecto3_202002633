@@ -1,0 +1,32 @@
+<!-- templates/estado_cuenta.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de Cuenta</title>
+</head>
+<body>
+    <h1>Estado de Cuenta</h1>
+    {% if data %}
+        <p>Cliente: {{ data.cliente.nombre }}</p>
+        <p>NIT: {{ data.cliente.nit }}</p>
+        <h2>Cargos:</h2>
+        <ul>
+            {% for cargo in data.cargos %}
+                <li>{{ cargo.numero_factura }} - {{ cargo.fecha }} - {{ cargo.valor }}</li>
+            {% endfor %}
+        </ul>
+        <h2>Abonos:</h2>
+        <ul>
+            {% for abono in data.abonos %}
+                <li>{{ abono.fecha }} - {{ abono.banco }} - {{ abono.valor }}</li>
+            {% endfor %}
+        </ul>
+        <p>Saldo: {{ data.saldo }} {{ data.moneda }}</p>
+    {% else %}
+        <p>No se encontraron datos para el cliente especificado.</p>
+    {% endif %}
+</body>
+</html>

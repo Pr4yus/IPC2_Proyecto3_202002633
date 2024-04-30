@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar Transacciones</title>
+</head>
+<body>
+    <h1>Cargar Transacciones</h1>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+    {% if error %}
+    <p>Error: {{ error }}</p>
+    {% endif %}
+
+    <!-- Formulario para cargar transacciones -->
+    <form action="{% url 'grabarTransaccion' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" accept=".xml">
+        <button type="submit">Cargar Transacciones</button>
+    </form>
+
+    <!-- Enlace para volver a la página principal -->
+    <a href="{% url 'index' %}">Volver a la página principal</a>
+</body>
+</html>

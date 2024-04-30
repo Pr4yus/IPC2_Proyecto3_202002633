@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingresos</title>
+</head>
+<body>
+    <h1>Ingresos</h1>
+    <h2>Mes elegido: {{ mes }}</h2>
+
+    {% if mensaje %}
+        <p>{{ mensaje }}</p>
+    {% else %}
+        <h2>Gráfica de Ingresos</h2>
+        {% if nombre_archivo %}
+            <img src="{{ url_for('static', filename=nombre_archivo) }}" alt="Gráfica de Ingresos">
+        {% else %}
+            <p>No hay datos para mostrar</p>
+        {% endif %}
+    {% endif %}
+
+    <a href="/">Volver a Inicio</a>
+</body>
+</html>

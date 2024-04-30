@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>File Upload</h1>
+    <form action="/grabarConfiguracion/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+        <label for="config_file">Cargar archivo de configuración:</label>
+<!--
+        <input type="file" name="config_file" id="config_file">
+-->
+        <button type="submit">Cargar</button>
+    </form>
+    <form action="/grabarTransacciones/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+        <label for="transacciones_file">Cargar archivo de transacciones:</label>
+<!--
+        <input type="file" name="transacciones_file" id="transacciones_file">
+-->
+        <button type="submit">Cargar</button>
+    </form>
+    <h2>Consultar Estado de Cuenta</h2>
+    <form action="/devolverEstadoCuenta/" method="get">
+        <label for="nit_cliente">NIT del cliente:</label>
+        <input type="text" name="nit_cliente" id="nit_cliente">
+        <button type="submit">Consultar</button>
+    </form>
+    <h2>Consultar Ingresos</h2>
+    <form action="devolverResumenPagos/" method="get">
+        <label for="mes">Mes:</label>
+        <input type="text" name="mes" id="mes">
+        <button type="submit">Consultar</button>
+    </form>
+</body>
+</html>

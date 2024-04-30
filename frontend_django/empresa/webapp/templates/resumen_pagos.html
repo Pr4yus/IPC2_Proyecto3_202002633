@@ -1,0 +1,25 @@
+<!-- templates/resumen_pagos.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Pagos</title>
+</head>
+<body>
+    <h1>Resumen de Pagos</h1>
+    {% if data %}
+        {% for banco, pagos in data.items %}
+            <h2>{{ banco }}</h2>
+            <ul>
+                {% for pago in pagos %}
+                    <li>{{ pago.fecha }} - {{ pago.NIT_cliente }} - {{ pago.monto }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% else %}
+        <p>No se encontraron pagos para el mes especificado.</p>
+    {% endif %}
+</body>
+</html>
