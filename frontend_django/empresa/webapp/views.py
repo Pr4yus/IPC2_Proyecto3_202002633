@@ -1,3 +1,7 @@
+from django.http import JsonResponse
+from django.shortcuts import render
+
+# Create your views here.
 # frontend/views.py
 
 from django.shortcuts import render
@@ -28,15 +32,30 @@ def grabarTransaccion(request):
 
 def devolverEstadoCuenta(request):
     nit = request.GET.get('nit_cliente')
-    url = f'http://localhost:5000/devolverEstadoCuenta/?NIT={nit}'  # Cambia esto por la URL correcta de tu backend Flask
+    url = f'http://localhost:5000/devolverEstadoCuenta?nit_cliente={nit}'  # Cambia esto por la URL correcta de tu backend Flask
     response = requests.get(url)
-    return render(request, 'estado_cuenta.html', response.json(), status=response.status_code)
+    if response.status_code == 200:
+        return render(request, 'estado_cuenta.html', {'data': response.json()})
+    else:
+        return render(request, 'estado_cuenta.html', {'error': 'Cliente o banco no encontrado'})
 
 def devolverResumenPagos(request):
     mes = request.GET.get('mes')
     url = f'http://localhost:5000/devolverResumenPagos?mes={mes}'  # Cambia esto por la URL correcta de tu backend Flask
     response = requests.get(url)
-    return render(request, 'resumen_pagos.html', response.json(), status=response.status_code)
+    return render(request, 'resumen_pagos.html', {'data': response.json()})
+
+import requests
+from django.http import JsonResponse
+
+def borrarDatos(request):
+    url = 'http://localhost:5000/borrarDatos'  # Cambia esto por la URL correcta de tu backend Flask
+    response = requests.delete(url)
+    if response.status_code == 200:
+        return JsonResponse({'mensaje': 'Todos los datos han sido borrados.'})
+    else:
+        return JsonResponse({'error': 'Hubo un error al intentar borrar los datos.'}, status=400)
+
 
 def pagina_no_encontrada(request, exception):
     return render(request, '404.html', status=404)
