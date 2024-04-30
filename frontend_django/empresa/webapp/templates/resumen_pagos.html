@@ -1,5 +1,3 @@
-<!-- templates/resumen_pagos.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,15 +9,22 @@
     <h1>Resumen de Pagos</h1>
     {% if data %}
         {% for banco, pagos in data.items %}
-            <h2>{{ banco }}</h2>
+            <h2>El banco es {{ banco }}</h2>
             <ul>
                 {% for pago in pagos %}
-                    <li>{{ pago.fecha }} - {{ pago.NIT_cliente }} - {{ pago.monto }}</li>
+                    <li>Fecha: {{ pago.fecha }} - NIT: {{ pago.NIT_cliente }} - Monto: Q. {{ pago.monto }}</li>
                 {% endfor %}
             </ul>
         {% endfor %}
     {% else %}
         <p>No se encontraron pagos para el mes especificado.</p>
     {% endif %}
+    <h2>Gráfica de Ingresos</h2>
+    {% if image_base64 %}
+        <img src="data:image/png;base64,{{ image_base64 }}">
+    {% else %}
+        <p>No hay datos para mostrar</p>
+    {% endif %}
+    <a href="/">Volver a Inicio</a>
 </body>
 </html>
