@@ -185,6 +185,18 @@ def borrarDatos():
     bancos = {}
     return jsonify({'mensaje': 'Todos los datos han sido borrados.'})
 
+@app.route('/ayuda', methods=['GET'])
+def ayuda():
+    # Aquí puedes poner la información del estudiante y la ruta al archivo PDF de la documentación del programa.
+    estudiante = {
+        'nombre': 'Abner Palacios',
+        'carnet': '202002633',
+
+    }
+    documentacion = 'empresa/webapp/CAJETIN.pdf'  # Cambia esto por la ruta correcta al archivo PDF
+
+    return jsonify({'estudiante': estudiante, 'documentacion': documentacion})
+
 def pagina_no_encontrada(error):
     return "<h1>La página que intentas buscar no existe!!</h1>"
 
