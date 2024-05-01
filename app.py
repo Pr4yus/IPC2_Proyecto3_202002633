@@ -98,7 +98,7 @@ def grabarTransaccion():
 
 @app.route('/devolverEstadoCuenta', methods=['GET'])
 def devolverEstadoCuenta():
-    nit = request.args.get('NIT')
+    nit = request.args.get('nit_cliente')
     # codigo_banco = request.args.get('codigo')
     cliente_info = None
     banco = None
@@ -175,6 +175,27 @@ def devolverResumenPagos():
 
     return jsonify(pagos_por_banco)
 
+@app.route('/borrarDatos', methods=['DELETE'])
+def borrarDatos():
+    # Asegúrate de que estas son las estructuras de datos correctas que estás utilizando para almacenar tus datos.
+    global clientes, facturas, pagos, bancos
+    clientes = {}
+    facturas = []
+    pagos = []
+    bancos = {}
+    return jsonify({'mensaje': 'Todos los datos han sido borrados.'})
+
+@app.route('/ayuda', methods=['GET'])
+def ayuda():
+    # Aquí puedes poner la información del estudiante y la ruta al archivo PDF de la documentación del programa.
+    estudiante = {
+        'nombre': 'Abner Palacios',
+        'carnet': '202002633',
+
+    }
+    documentacion = 'empresa/webapp/CAJETIN.pdf'  # Cambia esto por la ruta correcta al archivo PDF
+
+    return jsonify({'estudiante': estudiante, 'documentacion': documentacion})
 
 def pagina_no_encontrada(error):
     return "<h1>La página que intentas buscar no existe!!</h1>"
