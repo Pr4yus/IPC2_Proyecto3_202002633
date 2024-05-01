@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargar Configuración</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles2.css' %}">
 </head>
 <body>
     <h1>Cargar Configuración</h1>
@@ -18,10 +20,9 @@
     <form action="{% url 'grabarConfiguracion' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="file" accept=".xml">
-        <button type="submit">Cargar Configuración</button>
-    </form>
+       <button type="submit">Cargar Configuracion</button>    </form>
 
     <!-- Enlace para volver a la página principal -->
-    <a href="{% url 'index' %}">Volver a la página principal</a>
+    <a href="{% url 'index' %}" class="back-link">Volver a la página principal</a>
 </body>
 </html>

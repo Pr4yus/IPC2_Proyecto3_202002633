@@ -1,0 +1,23 @@
+body {
+    background-color: #B0B0B0;  /* Un color pálido para el fondo */
+    font-family: Arial, sans-serif;
+}
+#menu {
+    width: 500px;  /* Ancho del menú a 500px */
+    height: 100vh; /* Altura del menú al 100% de la altura de la ventana */
+    background-color: #CACACA;  /* Un gris menos claro para el menú */
+    padding: 15px;
+    float: left;
+}
+#content {
+    margin-left: 525px;  /* Dejar espacio para el menú */
+    padding: 15px;
+}
+h1 {
+    background-color: #FCF9F9;  /* Un gris más claro para la barra del título */
+    padding: 15px;
+    text-align: center;
+}
+form {
+    margin-bottom: 15px;
+}

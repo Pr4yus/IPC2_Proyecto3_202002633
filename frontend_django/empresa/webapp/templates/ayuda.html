@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda</title>
+    <link rel="stylesheet" href="{% static 'styles3.css' %}">
+</head>
+<body>
+    <h1>Ayuda</h1>
+    <h2>Información del Estudiante</h2>
+    <p>Nombre: {{ data.estudiante.nombre }}</p>
+    <p>carnet: {{ data.estudiante.carnet }}</p>
+    <h2>Documentación del Programa</h2>
+    <a href="{% static 'documentacion.pdf' %}" target="_blank">
+        <button type="button">Abrir Documentación</button>
+    </a>
+    <br>
+    <br>
+    <a href="{% url 'index' %}">Volver a la página principal</a>
+</body>
+</html>

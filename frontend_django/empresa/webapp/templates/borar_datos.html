@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrar Datos</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Borrar Datos</h1>
+    <button id="borrarDatos">Borrar Datos</button>
+    <div id="mensaje"></div>
+
+    <script>
+    $(document).ready(function(){
+        $("#borrarDatos").click(function(){
+            $.ajax({
+                url: '/borrarDatos/',  // Cambia esto por la URL correcta de tu vista Django
+                type: 'DELETE',
+                success: function(response) {
+                    $("#mensaje").html(response.mensaje);
+                },
+                error: function(response) {
+                    $("#mensaje").html(response.responseJSON.error);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from webapp import views
 
@@ -27,6 +29,11 @@ urlpatterns = [
     path('grabarTransacciones/', views.grabarTransaccion, name='grabarTransaccion'),
     path('devolverEstadoCuenta/', views.devolverEstadoCuenta, name='devolverEstadoCuenta'),
     path('devolverResumenPagos/', views.devolverResumenPagos, name='devolverResumenPagos'),
-    #path('pagina-no-encontrada/', views.pagina_no_encontrada, name='pagina_no_encontrada'),
+    path('borrarDatos/', views.borrarDatos, name='borrar datos'),
+    path('ayuda/', views.ayuda, name= 'ayuda')
+
     # Otros patrones de URL aquí...
+
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

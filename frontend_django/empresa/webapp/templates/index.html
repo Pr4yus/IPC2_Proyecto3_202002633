@@ -1,39 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload</title>
+    <title>ITGSA</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <h1>File Upload</h1>
-    <form action="/grabarConfiguracion/" method="post" enctype="multipart/form-data">
+    <h1 id="title">ITGSA</h1>
+    <div id="menu">
+        <form action="/grabarConfiguracion/" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-        <label for="config_file">Cargar archivo de configuración:</label>
-<!--
-        <input type="file" name="config_file" id="config_file">
--->
-        <button type="submit">Cargar</button>
-    </form>
-    <form action="/grabarTransacciones/" method="post" enctype="multipart/form-data">
+            <label for="config_file">Cargar archivo de configuración:</label>
+            <button type="submit">Cargar</button>
+        </form>
+        <form action="/grabarTransacciones/" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-        <label for="transacciones_file">Cargar archivo de transacciones:</label>
-<!--
-        <input type="file" name="transacciones_file" id="transacciones_file">
--->
-        <button type="submit">Cargar</button>
-    </form>
-    <h2>Consultar Estado de Cuenta</h2>
-    <form action="/devolverEstadoCuenta/" method="get">
-        <label for="nit_cliente">NIT del cliente:</label>
-        <input type="text" name="nit_cliente" id="nit_cliente">
-        <button type="submit">Consultar</button>
-    </form>
-    <h2>Consultar Ingresos</h2>
-    <form action="devolverResumenPagos/" method="get">
-        <label for="mes">Mes:</label>
-        <input type="text" name="mes" id="mes">
-        <button type="submit">Consultar</button>
-    </form>
+            <label for="transacciones_file">Cargar archivo de transacciones:</label>
+            <button type="submit">Cargar</button>
+        </form>
+        <h2>Consultar Estado de Cuenta</h2>
+        <form action="/devolverEstadoCuenta/" method="get">
+            <label for="nit_cliente">NIT del cliente:</label>
+            <input type="text" name="nit_cliente" id="nit_cliente">
+            <button type="submit">Consultar</button>
+        </form>
+        <h2>Consultar Ingresos</h2>
+        <form action="/devolverResumenPagos/" method="get">
+            <label for="mes">Mes:</label>
+            <input type="text" name="mes" id="mes">
+            <button type="submit">Consultar</button>
+        </form>
+        <h2>Borrar Datos</h2>
+        <button id="borrarDatos">Borrar Datos</button>
+        <h2>Ayuda</h2>
+        <a href="/ayuda/">Ir a la página de ayuda</a>
+    </div>
+    <script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    $(document).ready(function(){
+        $("#borrarDatos").click(function(){
+            $.ajax({
+                url: '/borrarDatos/',  // Cambia esto por la URL correcta de tu vista Django
+                type: 'DELETE',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+                success: function(response) {
+                    $("#mensaje").html(response.mensaje);
+                },
+                error: function(response) {
+                    $("#mensaje").html(response.responseJSON.error);
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

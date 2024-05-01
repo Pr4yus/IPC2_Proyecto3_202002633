@@ -1,5 +1,3 @@
-<!-- templates/estado_cuenta.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,23 +8,32 @@
 <body>
     <h1>Estado de Cuenta</h1>
     {% if data %}
-        <p>Cliente: {{ data.cliente.nombre }}</p>
-        <p>NIT: {{ data.cliente.nit }}</p>
-        <h2>Cargos:</h2>
-        <ul>
+        <h2>Cliente: {{ data.cliente.nit }} - {{ data.cliente.nombre }}</h2>
+        <p>Saldo actual: Q. {{ data.saldo }}</p>
+        <h3>Transacciones</h3>
+        <table>
+            <tr>
+                <th>Fecha</th>
+                <th>Cargo</th>
+                <th>Abono</th>
+            </tr>
             {% for cargo in data.cargos %}
-                <li>{{ cargo.numero_factura }} - {{ cargo.fecha }} - {{ cargo.valor }}</li>
+                <tr>
+                    <td>{{ cargo.fecha }}</td>
+                    <td>Q. {{ cargo.valor }}</td>
+                    <td></td>
+                </tr>
             {% endfor %}
-        </ul>
-        <h2>Abonos:</h2>
-        <ul>
             {% for abono in data.abonos %}
-                <li>{{ abono.fecha }} - {{ abono.banco }} - {{ abono.valor }}</li>
+                <tr>
+                    <td>{{ abono.fecha }}</td>
+                    <td></td>
+                    <td>Q. {{ abono.valor }}</td>
+                </tr>
             {% endfor %}
-        </ul>
-        <p>Saldo: {{ data.saldo }} {{ data.moneda }}</p>
+        </table>
     {% else %}
-        <p>No se encontraron datos para el cliente especificado.</p>
+        <p>No se encontraron transacciones para el cliente especificado.</p>
     {% endif %}
 </body>
 </html>
