@@ -1,14 +1,7 @@
+import os
 from django.http import JsonResponse, FileResponse
-from django.shortcuts import render
-from django.http import FileResponse
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, Paragraph
-from io import BytesIO
-from reportlab.pdfgen import canvas
-from io import BytesIO
-# Create your views here.
-# frontend/views.py
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from django.http import FileResponse
@@ -124,6 +117,7 @@ def borrarDatos(request):
         return JsonResponse({'mensaje': 'Todos los datos han sido borrados.'})
     else:
         return JsonResponse({'error': 'Hubo un error al intentar borrar los datos.'}, status=400)
+
 
 
 def ayuda(request):
